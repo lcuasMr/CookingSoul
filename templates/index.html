@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+    <header>
+        <img src="static/logo.png" alt="Cooking Soul Logo" width="30%" height="30%">
+        <h1>Cooking Soul</h1>
+        <nav>
+            <ul>
+                <li><a href="#recetas">Recetas</a></li>
+                <li><a href="#sobre-nosotros">Sobre Nosotros</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero">
+            <h2>Descubre las mejores recetas para cada ocasión</h2>
+            <p>Explora nuestra colección de recetas deliciosas y fáciles de preparar.</p>
+            <a href="#recetas" class="btn">Ver Recetas</a>
+        </section>
+
+        <section id="recetas">
+            <h2>Nuestras Recetas</h2>
+            <div class="recetas-grid">
+                <article>
+                    <img src="images/receta1.jpg" alt="Receta 1">
+                    <h3>Receta 1</h3>
+                    <p>Descripción breve de la receta.</p>
+                </article>
+                <article>
+                    <img src="images/receta2.jpg" alt="Receta 2">
+                    <h3>Receta 2</h3>
+                    <p>Descripción breve de la receta.</p>
+                </article>
+                <article>
+                    <img src="images/receta3.jpg" alt="Receta 3">
+                    <h3>Receta 3</h3>
+                    <p>Descripción breve de la receta.</p>
+                </article>
+            </div>
+        </section>
+
+        <section id="sobre-nosotros">
+            <h2>Sobre Nosotros</h2>
+            <p>En Cooking Soul, nos apasiona compartir recetas que inspiran y deleitan. Nuestro objetivo es ayudarte a crear momentos inolvidables en la cocina.</p>
+        </section>
+
+        <section id="contacto">
+            <h2>Contacto</h2>
+            <p>¿Tienes alguna pregunta o sugerencia? Contáctanos a través de nuestro correo: <a href="mailto:info@cookingsoul.com">info@cookingsoul.com</a></p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Cooking Soul. Todos los derechos reservados.</p>
+    </footer>
+{% endblock %}
