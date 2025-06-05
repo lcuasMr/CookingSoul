@@ -3,6 +3,7 @@ import sys
 from entities import UserEntity
 
 from daos.UserDAO import UserDAO
+from daos.IngredientDAO import IngredientDAO
 
 from sqlalchemy import Engine, MetaData, Table, Column, Integer, String
 
@@ -28,6 +29,18 @@ class Facade:
             Column('email', String(100), nullable=False, unique=True),
             Column('password', String(255), nullable=False)
         )
+
+        ingredients = Table(
+            'ingredients',
+            self._metadata,
+            Column('id', Integer, primary_key=True, autoincrement=True),
+            Column('name', String(100), nullable=False),
+            Column('region', String(100), nullable=True),
+            Column('variety', String(100), nullable=True),
+            Column('flavor', String(100), nullable=True),
+            Column('medition', String(50), nullable=True)
+        )
+        
         self._metadata.create_all(self._engine)
 
         userdao = UserDAO(self._engine)
@@ -43,3 +56,8 @@ class Facade:
     def list_users(self) -> list[UserEntity]:
         user_dao: UserDAO = UserDAO(self._engine)
         return user_dao.get_all_users()
+
+    def list_ingredients(self) -> list:
+        ingredient_dao = IngredientDAO(self._engine)
+        ingredients = ingredient_dao.get_all_ingredients()
+        return []

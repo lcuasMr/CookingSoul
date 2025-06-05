@@ -2,8 +2,8 @@ from typing import List, Optional
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from models.user import User  # Assuming you have a User model defined in models/User.py
-from entities.UserEntity import UserEntity  # Assuming you have a UserEntity defined in entities/UserEntity.py
+from models.user import User  
+from entities.UserEntity import UserEntity 
 class UserDAO:
     def __init__(self, engine: Engine):
         self._engine: Engine = engine
