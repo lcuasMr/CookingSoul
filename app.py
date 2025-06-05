@@ -20,7 +20,6 @@ app.config['SECRET_KEY'] = SECRET_KEY
 
 
 _DB_ENGINE = create_engine('sqlite:///cooking_soul.db')
-Base.metadata.create_all(_DB_ENGINE)
 
 _FACADE = Facade(engine=_DB_ENGINE)
 
