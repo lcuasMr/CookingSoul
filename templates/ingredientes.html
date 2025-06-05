@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Lista de ingredientes</h1>
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Nombre</th>
+                <th>Variedad</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ingrediente in ingredients %}
+            <tr>
+                <td>{{ ingrediente.name }}</td>
+                <td>{{ ingrediente.variety }}</td>
+                <td>
+                    <a href="/ingredientes/{{ ingrediente.id }}" class="btn btn-primary btn-sm">Ver</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
