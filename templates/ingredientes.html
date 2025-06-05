@@ -2,24 +2,21 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="mb-4">Lista de Ingreientes</h1>
+    <h1 class="mb-4">Lista de ingredientes</h1>
     <table class="table table-striped">
         <thead class="thead-dark">
             <tr>
-                <th>#</th>
                 <th>Nombre</th>
-                <th>Email</th>
-                <th>Acciones</th>
+                <th>Variedad</th>
             </tr>
         </thead>
         <tbody>
-            {% for ingrediente in ingredientes %}
+            {% for ingrediente in ingredients %}
             <tr>
-                <td>{{ ingrediente.id }}</td>
                 <td>{{ ingrediente.name }}</td>
+                <td>{{ ingrediente.variety }}</td>
                 <td>
-                    <a href="/usuarios/{{ ingrediente.id }}/editar" class="btn btn-primary btn-sm">Editar</a>
-                    <a href="/usuarios/{{ ingrediente.id }}/eliminar" class="btn btn-danger btn-sm">Eliminar</a>
+                    <a href="/ingredientes/{{ ingrediente.id }}" class="btn btn-primary btn-sm">Ver</a>
                 </td>
             </tr>
             {% endfor %}

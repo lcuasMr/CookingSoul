@@ -14,6 +14,7 @@ class IngredientEntity(Base):
     variety = mapped_column(String(100), nullable=True)
     flavor = mapped_column(String(100), nullable=True)
     medition = mapped_column(String(50), nullable=True)
+    image_url = mapped_column(String(255), nullable=True)
 
     def __init__(self, ingredient_model):
         super().__init__()
@@ -23,6 +24,7 @@ class IngredientEntity(Base):
         self.variety = ingredient_model.variety
         self.flavor = ingredient_model.flavor
         self.medition = ingredient_model.medition
+        self.image_url = ingredient_model.image_url
 
     def __repr__(self):
         return (
@@ -37,5 +39,6 @@ class IngredientEntity(Base):
             region=self.region,
             variety=self.variety,
             flavor=self.flavor,
-            medition=self.medition
+            medition=self.medition,
+            image_url=self.image_url
         )

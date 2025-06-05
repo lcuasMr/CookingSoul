@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from models.user import User
 
 from mappers.UserMapper import UsuarioMapper
+from mappers.IngredientMapper import IngredientMapper
 
 from Facade import Facade
 from entities import Base
@@ -20,7 +21,6 @@ app.config['SECRET_KEY'] = SECRET_KEY
 
 
 _DB_ENGINE = create_engine('sqlite:///cooking_soul.db')
-Base.metadata.create_all(_DB_ENGINE)
 
 _FACADE = Facade(engine=_DB_ENGINE)
 
@@ -55,6 +55,21 @@ def usuarios():
     users = [UsuarioMapper.reverse_map(user) for user in _FACADE.list_users()]
     print(users, file=sys.stdout)
     return render_template('usuarios.html', usuarios=users)
+
+@app.route('/ingredientes', methods=['GET'])
+def ingredientes():
+    ingredients = [IngredientMapper.reverse_map(ingredient) for ingredient in _FACADE.list_ingredients()]
+    print(ingredients, file=sys.stdout)
+    return render_template('ingredientes.html', ingredients=ingredients)
+
+@app.route('/ingredientes/<int:ingredient_id>', methods=['GET'])
+def ingrediente(ingredient_id):
+    ingredient = _FACADE.get_ingredient_by_id(ingredient_id)
+    print(ingredient, file=sys.stdout)
+    if ingredient:
+        return render_template('ingredient.html', ingredient=IngredientMapper.reverse_map(ingredient))
+    else:
+        return "Ingredient not found", 404
 
 if __name__ == '__main__':
     app.run(debug=True)

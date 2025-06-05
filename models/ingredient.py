@@ -9,6 +9,7 @@ class Ingredient:
         variety: Optional[str] = None,
         flavor: Optional[str] = None,
         medition: Optional[str] = None, # Tipo de medicion aplicada ( ml, l , g, kg, etc )
+        image_url: Optional[str] = None
 
     ):
         self._id: Optional[int] = id
@@ -17,6 +18,7 @@ class Ingredient:
         self._variety: Optional[str] = variety
         self._flavor: Optional[str] = flavor
         self._medition: Optional[str] = medition
+        self._image_url: Optional[str] = image_url
 
     @property
     def id(self) -> Optional[int]:
@@ -62,5 +64,12 @@ class Ingredient:
     def medition(self, value: str) -> None:
         self._medition = value
 
+    @property
+    def image_url(self) -> Optional[str]:
+        return self._image_url
+    @image_url.setter
+    def image_url(self, value: str) -> None:
+        self._image_url = value
+
     def __str__(self):
-        return f"Ingredient({self.id}, {self.name}, {self.quantity})"
+        return f"Ingredient({self.id}, {self.name}, {self.region}, {self.variety}, {self.flavor}, {self.medition})"

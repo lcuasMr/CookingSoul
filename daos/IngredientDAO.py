@@ -32,8 +32,7 @@ class IngredientDAO:
 
     def get_all_ingredients(self) -> List[Ingredient]:
         with self._session_maker() as session:
-            entities = session.query(IngredientEntity).all()
-            return [entity.to_model() for entity in entities]
+            return session.query(IngredientEntity).all()
 
     def create_ingredient(self, ingredient: Ingredient) -> Ingredient:
         with self._session_maker() as session:
