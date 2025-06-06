@@ -16,12 +16,21 @@ class RecipieDAO:
         self._engine: Engine = engine
         self._session_maker: sessionmaker[Session] = sessionmaker(bind=self._engine)
 
-    def persist_model(self, recipie: Recipie) -> Optional[Recipie]:
+    def persist_model(self, recipie) -> Optional[Recipie]:
         session = self._session_maker()
+        print(f"Persisting example recipie: {recipie}", file=sys.stdout)
         try:
             new_recipie = RecipieEntity(recipie)
-            print(f"Persisting recipie: {new_recipie}", file=sys.stdout)
             session.add(new_recipie)
+            session.flush()
+            for ingredient in recipie.ingredients:
+                association = RecipieIngredientAssociation(
+                    recipie_id=new_recipie.id,
+                    ingredient_id=ingredient[0],
+                    cuantity=ingredient[1]
+                )
+                new_recipie.ingredients.append(association)
+            #session.add(new_recipie)
             session.commit()
             session.refresh(new_recipie)
             return new_recipie.to_model()
@@ -36,8 +45,7 @@ class RecipieDAO:
         session = self._session_maker()
         print(f"Persisting example recipie: {recipie}", file=sys.stdout)
         try:
-            recipie_model = recipie
-            new_recipie = RecipieEntity(recipie_model)
+            new_recipie = RecipieEntity(recipie)
             session.add(new_recipie)
             session.flush()
             for ingredient in recipie.ingredients:

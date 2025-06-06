@@ -77,3 +77,11 @@ class Facade:
             return ingredient
         else:
             raise ValueError(f"Ingredient with ID {ingredient_id} not found.")
+        
+    def add_recipie(self, title, description, ingredient_cuantity, instructions):
+        recipie_dao = RecipieDAO(self._engine)
+        print(ingredient_cuantity, file=sys.stdout)
+        ingredient_dao = IngredientDAO(self._engine)
+        recipie = Recipie(title=title, description=description, ingredients=ingredient_cuantity, instructions=instructions)
+        print(f"Adding new recipie: {recipie}", file=sys.stdout)
+        return recipie_dao.persist_model(recipie)

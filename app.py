@@ -13,6 +13,8 @@ from Facade import Facade
 from entities import Base
 from sqlalchemy import create_engine
 
+import json
+
 app = Flask(__name__)
 
 SECRET_KEY = os.urandom(32)
@@ -70,6 +72,29 @@ def ingrediente(ingredient_id):
         return render_template('ingredient.html', ingredient=IngredientMapper.reverse_map(ingredient))
     else:
         return "Ingredient not found", 404
+    
+@app.route('/add_receta', methods=['POST', 'GET'])
+def add_receta():
+    if request.method == 'POST':
+        # Here you would handle the form submission for adding a recipe
+        # For now, we just return a success message
+        ingredient_cuantity: list[tuple] = []
+        ingredients_json = request.form['ingredients']
+        ingredients_list = json.loads(ingredients_json)
+        for ingredient in ingredients_list:
+            print(ingredient, file=sys.stdout)
+            ingredient_cuantity.append((ingredient.get("id"), ingredient.get("cuantity", 0)))
+        _FACADE.add_recipie(
+            title=request.form['title'],
+            description=request.form['description'],
+            ingredient_cuantity=ingredient_cuantity,
+            instructions=request.form['instructions']
+        )
+        ingredients = [IngredientMapper.reverse_map(ingredient) for ingredient in _FACADE.list_ingredients()]
+        return render_template('add_receta.html', ingredients=ingredients, success=True)
+    else:
+        ingredients = [IngredientMapper.reverse_map(ingredient) for ingredient in _FACADE.list_ingredients()]
+        return render_template('add_receta.html', ingredients=ingredients, success=True)
 
 if __name__ == '__main__':
     app.run(debug=True)

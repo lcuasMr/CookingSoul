@@ -8,13 +8,13 @@ class Recipie:
         id: Optional[int] = None,
         title: Optional[str] = None,
         description: Optional[str] = None,
-        ingredients: Optional[str] = None,
-        instructions: Optional[List[Ingredient]] = None
+        ingredients: Optional[tuple] = None,
+        instructions: Optional[str] = None
     ):
         self._id: Optional[int] = id
         self._title: Optional[str] = title
         self._description: Optional[str] = description
-        self._ingredients: Optional[List[Ingredient]] = ingredients
+        self._ingredients: Optional[list[tuple]] = ingredients
         self._instructions: Optional[str] = instructions
 
     @property
@@ -42,11 +42,11 @@ class Recipie:
         self._description = value
 
     @property
-    def ingredients(self) -> Optional[List[Ingredient]]:
+    def ingredients(self) -> Optional[list[tuple]]:
         return self._ingredients
 
     @ingredients.setter
-    def ingredients(self, value: List[Ingredient]) -> None:
+    def ingredients(self, value: list[tuple]) -> None:
         self._ingredients = value
 
     @property

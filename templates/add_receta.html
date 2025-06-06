@@ -42,21 +42,21 @@
     </div>
 </div>
 <script>
-const ingredientes = {{ingredients | tojson }};
+const ingredientes = {{ingredients | tojson}};
 
 const searchInput = document.getElementById("searchInput");
 const ingredientList = document.getElementById("ingredientList");
 const selectedContainer = document.getElementById("selectedIngredients");
 const form = document.getElementById("recipieForm");
 
-const selectedIds = new Set();
+const selectedIngredients = new Map();
 
 function mostrarIngredientes(lista) {
     ingredientList.innerHTML = "";
     lista.forEach(ing => {
     const li = document.createElement("li");
     li.className = "list-group-item d-flex align-items-center ingredient-item";
-    const imageUrl = ing.image_url ? "/static/" + ing.image_url : "https://via.placeholder.com/40";
+    const imageUrl = ing.image_url ? ing.image_url : "https://via.placeholder.com/40";
 
     li.innerHTML = `
         <img src="${imageUrl}" alt="${ing.name}" class="ingredient-img rounded">
@@ -68,8 +68,8 @@ function mostrarIngredientes(lista) {
     li.addEventListener("click", () => {
         searchInput.value = "";
         ingredientList.style.display = "none";
-        if (!selectedIds.has(ing.id)) {
-        selectedIds.add(ing.id);
+        if (!selectedIngredients.has(ing.id)) {
+        selectedIngredients.set(ing.id, { ...ing, cuantity: "" });
         agregarIngredienteSeleccionado(ing);
         }
     });
@@ -78,21 +78,42 @@ function mostrarIngredientes(lista) {
 }
 
 function agregarIngredienteSeleccionado(ing) {
-    const badge = document.createElement("span");
-    badge.className = "badge bg-success selected-ingredient";
-    badge.textContent = ing.name;
-    
-    const removeBtn = document.createElement("button");
-    removeBtn.type = "button";
-    removeBtn.className = "btn-close btn-close-white btn-sm ms-2";
-    removeBtn.setAttribute("aria-label", "Eliminar");
-    removeBtn.addEventListener("click", () => {
-    selectedContainer.removeChild(badge);
-    selectedIds.delete(ing.id);
+    const group = document.createElement("div");
+    group.className = "input-group mb-2 selected-ingredient";
+
+    // Nombre del ingrediente como label (usa <span>)
+    const label = document.createElement("span");
+    label.className = "input-group-text";
+    label.textContent = ing.name;
+    label.dataset.ingId = ing.id; // Añade el ID del ingrediente al label
+
+    // Input de cantidad
+    const input = document.createElement("input");
+    input.type = "number";
+    input.className = "form-control";
+    input.placeholder = `Cantidad (${ing.medition || 'unidad'})`;
+    input.required = true;
+    input.min = 0;
+    input.step = "any";
+    input.style.maxWidth = "150px";
+    input.addEventListener("input", () => {
+        selectedIngredients.get(ing.id).cuantity = input.value;
     });
 
-    badge.appendChild(removeBtn);
-    selectedContainer.appendChild(badge);
+    // Botón eliminar (en un input-group-append)
+    const removeBtn = document.createElement("button");
+    removeBtn.className = "btn btn-outline-danger";
+    removeBtn.type = "button";
+    removeBtn.textContent = "Eliminar";
+    removeBtn.addEventListener("click", () => {
+        selectedIngredients.delete(ing.id);
+        selectedContainer.removeChild(group);
+    });
+
+    group.appendChild(label);
+    group.appendChild(input);
+    group.appendChild(removeBtn);
+    selectedContainer.appendChild(group);
 }
 
 searchInput.addEventListener("input", () => {
@@ -101,25 +122,39 @@ searchInput.addEventListener("input", () => {
     ing.name.toLowerCase().includes(filtro)
     );
 
-    if (filtro.trim() === "" || filtrados.length === 0) {
-    ingredientList.style.display = "none";
-    } else {
-    mostrarIngredientes(filtrados);
-    ingredientList.style.display = "block";
-    }
+    ingredientList.style.display = filtro && filtrados.length > 0 ? "block" : "none";
+    if (filtro && filtrados.length > 0) mostrarIngredientes(filtrados);
 });
 
 document.addEventListener("click", (e) => {
-    if (!searchInput.contains(e.target) &&
-        !ingredientList.contains(e.target)) {
+    if (!searchInput.contains(e.target) && !ingredientList.contains(e.target)) {
     ingredientList.style.display = "none";
     }
 });
 
 form.addEventListener("submit", (e) => {
-    //e.preventDefault();
-    const seleccionados = Array.from(selectedIds);
-    document.getElementById("ingredientsInput").value = JSON.stringify(seleccionados);
+    // Sincroniza los valores de los inputs con el Map
+    selectedContainer.querySelectorAll('input[type="number"]').forEach(input => {
+        const ingId = parseInt(input.closest('.selected-ingredient').querySelector('.input-group-text').dataset.ingId);
+        if (selectedIngredients.has(ingId)) {
+            selectedIngredients.get(ingId).cuantity = input.value;
+        }
+    });
+
+    const data = Array.from(selectedIngredients.values());
+    const vacíos = data.filter(i => !i.cuantity || parseFloat(i.cuantity) <= 0);
+
+    if (vacíos.length > 0) {
+    e.preventDefault();
+    alert("Por favor, especifica una cantidad válida para todos los ingredientes.");
+    return;
+    }
+
+    document.getElementById("ingredientsInput").value = JSON.stringify(data);
+
+    
+    console.log("ingredientes con cantidades:", data);
+    alert("Enviado. Consulta la consola para ver los datos.");
 });
 </script>
 {% endblock %}
