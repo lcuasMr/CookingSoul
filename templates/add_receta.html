@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Añadir Receta</h4>
+                </div>
+                <div class="card-body">
+                    <form id="recipieForm" method="post" action="{{ url_for('add_receta') }}">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Título</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3 position-relative">
+                            <label for="searchInput" class="form-label">Buscar ingrediente por nombre</label>
+                            <input type="text" id="searchInput" class="form-control" placeholder="Ej. tomate, ajo, etc.">
+                            <ul class="list-group ingredient-dropdown" id="ingredientList"></ul>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ingredientes seleccionados</label>
+                            <div id="selectedIngredients"></div>
+                        </div>
+                        <input type="hidden" name="ingredients" id="ingredientsInput">
+                        <div class="mb-3">
+                            <label for="instructions" class="form-label">Instrucciones</label>
+                            <textarea class="form-control" id="instructions" name="instructions" rows="4" required></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">Guardar Receta</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+const ingredientes = {{ingredients | tojson }};
+
+const searchInput = document.getElementById("searchInput");
+const ingredientList = document.getElementById("ingredientList");
+const selectedContainer = document.getElementById("selectedIngredients");
+const form = document.getElementById("recipieForm");
+
+const selectedIds = new Set();
+
+function mostrarIngredientes(lista) {
+    ingredientList.innerHTML = "";
+    lista.forEach(ing => {
+    const li = document.createElement("li");
+    li.className = "list-group-item d-flex align-items-center ingredient-item";
+    const imageUrl = ing.image_url ? "/static/" + ing.image_url : "https://via.placeholder.com/40";
+
+    li.innerHTML = `
+        <img src="${imageUrl}" alt="${ing.name}" class="ingredient-img rounded">
+        <div>
+        <strong>${ing.name}</strong><br>
+        <small>${ing.variety} – ${ing.region}</small>
+        </div>
+    `;
+    li.addEventListener("click", () => {
+        searchInput.value = "";
+        ingredientList.style.display = "none";
+        if (!selectedIds.has(ing.id)) {
+        selectedIds.add(ing.id);
+        agregarIngredienteSeleccionado(ing);
+        }
+    });
+    ingredientList.appendChild(li);
+    });
+}
+
+function agregarIngredienteSeleccionado(ing) {
+    const badge = document.createElement("span");
+    badge.className = "badge bg-success selected-ingredient";
+    badge.textContent = ing.name;
+    
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "btn-close btn-close-white btn-sm ms-2";
+    removeBtn.setAttribute("aria-label", "Eliminar");
+    removeBtn.addEventListener("click", () => {
+    selectedContainer.removeChild(badge);
+    selectedIds.delete(ing.id);
+    });
+
+    badge.appendChild(removeBtn);
+    selectedContainer.appendChild(badge);
+}
+
+searchInput.addEventListener("input", () => {
+    const filtro = searchInput.value.toLowerCase();
+    const filtrados = ingredientes.filter(ing =>
+    ing.name.toLowerCase().includes(filtro)
+    );
+
+    if (filtro.trim() === "" || filtrados.length === 0) {
+    ingredientList.style.display = "none";
+    } else {
+    mostrarIngredientes(filtrados);
+    ingredientList.style.display = "block";
+    }
+});
+
+document.addEventListener("click", (e) => {
+    if (!searchInput.contains(e.target) &&
+        !ingredientList.contains(e.target)) {
+    ingredientList.style.display = "none";
+    }
+});
+
+form.addEventListener("submit", (e) => {
+    //e.preventDefault();
+    const seleccionados = Array.from(selectedIds);
+    document.getElementById("ingredientsInput").value = JSON.stringify(seleccionados);
+});
+</script>
+{% endblock %}
