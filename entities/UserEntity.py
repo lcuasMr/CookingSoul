@@ -3,7 +3,7 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy.ext.declarative import declarative_base
 from models.user import User  # Assuming you have a User model defined in models/User.py
 
-Base = declarative_base()
+from entities import Base
 
 class UserEntity(Base):
     __tablename__ = 'users'

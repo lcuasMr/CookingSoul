@@ -4,21 +4,29 @@ from entities import UserEntity
 
 from daos.UserDAO import UserDAO
 from daos.IngredientDAO import IngredientDAO
+from daos.RecipieDAO import RecipieDAO
 
-from sqlalchemy import Engine, MetaData, Table, Column, Integer, String
+from sqlalchemy import Engine, MetaData, Table, Column, Integer, String, ForeignKey, ARRAY
 
 from models.user import User
 from models.ingredient import Ingredient
+from models.recipie import Recipie
 
+from entities.UserEntity import UserEntity
+from entities.IngredientEntity import IngredientEntity
+from entities.RecipieEntity import RecipieEntity
 from utils import ingredients as ingredient_list
+from utils.recipiesexample import example_recipies
 
 import os
 
+import json
+
+from entities import Base
 
 class Facade:
     def __init__(self, engine: Engine):
         self._engine: Engine = engine
-        self._metadata: MetaData = MetaData()
         print(f"Facade initialized with engine: {self._engine}", file=sys.stdout)
         # Check if the database file exists, if not, create it
         if not os.path.exists('cooking_soul.db'):
@@ -26,28 +34,8 @@ class Facade:
         
 
     def create_database(self):
-        users = Table(
-            'users',
-            self._metadata,
-            Column('id', Integer, primary_key=True, autoincrement=True),
-            Column('username', String(50), nullable=False, unique=True),
-            Column('email', String(100), nullable=False, unique=True),
-            Column('password', String(255), nullable=False)
-        )
-
-        ingredients = Table(
-            'ingredients',
-            self._metadata,
-            Column('id', Integer, primary_key=True, autoincrement=True),
-            Column('name', String(100), nullable=False),
-            Column('region', String(100), nullable=True),
-            Column('variety', String(100), nullable=True),
-            Column('flavor', String(100), nullable=True),
-            Column('medition', String(50), nullable=True),
-            Column('image_url', String(255), nullable=True)
-        )
         
-        self._metadata.create_all(self._engine)
+        Base.metadata.create_all(self._engine)
 
         userdao = UserDAO(self._engine)
         ingredientdao = IngredientDAO(self._engine)
@@ -56,6 +44,11 @@ class Facade:
         print(ingredientdao.persist_model(Ingredient(id=0, name='tomate', region='España', variety='cherry', flavor= 'dulce', medition= 'Kg', image_url = None)), file=sys.stdout)
         for ingredient in ingredient_list.ingredients_json:
           ingredientdao.persist_model(Ingredient(**ingredient))
+
+        for recipe in example_recipies:
+            recipie_dao = RecipieDAO(self._engine)
+            recipie_dao.persist_model(Recipie(**recipe))
+
 
     def add_user(self, username: str, email: str, password: str) -> UserEntity:
         user_dao: UserDAO = UserDAO(self._engine)

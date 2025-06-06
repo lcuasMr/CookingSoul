@@ -1,4 +1,4 @@
-recipies_json = [
+example_recipies = [
     {
         "id": 1,
         "title": "Tortilla de Patatas",

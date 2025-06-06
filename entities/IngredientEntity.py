@@ -1,9 +1,11 @@
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import mapped_column, relationship, Mapped
 from sqlalchemy.ext.declarative import declarative_base
 from models.ingredient import Ingredient
 
-Base = declarative_base()
+from entities.association_tables import RecipieIngredientAssociation
+
+from entities import Base
 
 class IngredientEntity(Base):
     __tablename__ = 'ingredients'
@@ -15,6 +17,8 @@ class IngredientEntity(Base):
     flavor = mapped_column(String(100), nullable=True)
     medition = mapped_column(String(50), nullable=True)
     image_url = mapped_column(String(255), nullable=True)
+    
+    recipies: Mapped[list["RecipieIngredientAssociation"]] = relationship(back_populates="ingredient")
 
     def __init__(self, ingredient_model):
         super().__init__()
