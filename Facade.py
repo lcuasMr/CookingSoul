@@ -15,6 +15,7 @@ from models.recipie import Recipie
 from entities.UserEntity import UserEntity
 from entities.IngredientEntity import IngredientEntity
 from entities.RecipieEntity import RecipieEntity
+from entities.association_tables import RecipieIngredientAssociation
 from utils import ingredients as ingredient_list
 from utils.recipiesexample import example_recipies
 
@@ -46,8 +47,10 @@ class Facade:
           ingredientdao.persist_model(Ingredient(**ingredient))
 
         for recipe in example_recipies:
-            recipie_dao = RecipieDAO(self._engine)
-            recipie_dao.persist_model(Recipie(**recipe))
+            dao = RecipieDAO(self._engine)
+            dao.persist_model_example(Recipie(**recipe))
+            #print(f"Adding example recipe: {recipe}", file=sys.stdout)
+            
 
 
     def add_user(self, username: str, email: str, password: str) -> UserEntity:

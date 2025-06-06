@@ -14,7 +14,8 @@ ingredients_json = [
     "region": "Andalucía",
     "variety": "Virgen extra",
     "flavor": "Frutado y suave",
-    "medition": "mililitros"
+    "medition": "mililitros",
+    "image_url": ""
   },
   {
     "id": 3,
@@ -22,7 +23,8 @@ ingredients_json = [
     "region": "Castilla-La Mancha",
     "variety": "Morado",
     "flavor": "Intenso y picante",
-    "medition": "dientes"
+    "medition": "dientes",
+    "image_url": ""
   },
   {
     "id": 4,
@@ -30,7 +32,8 @@ ingredients_json = [
     "region": "Italia",
     "variety": "Genovesa",
     "flavor": "Dulce y anisado",
-    "medition": "hojas"
+    "medition": "hojas",
+    "image_url": ""
   },
   {
     "id": 5,
@@ -38,7 +41,8 @@ ingredients_json = [
     "region": "Emilia-Romaña",
     "variety": "Parmigiano Reggiano",
     "flavor": "Umami y salado",
-    "medition": "gramos"
+    "medition": "gramos",
+    "image_url": ""
   },
   {
     "id": 6,
@@ -46,15 +50,17 @@ ingredients_json = [
     "region": "India",
     "variety": "Tellicherry",
     "flavor": "Picante y terroso",
-    "medition": "cucharaditas"
+    "medition": "cucharaditas",
+    "image_url": ""
   },
-{
+  {
     "id": 7,
     "name": "Alcaparras",
     "region": "Mediterráneo",
     "variety": "Capparis spinosa",
     "flavor": "Ácido y salado",
-    "medition": "gramos"
+    "medition": "gramos",
+    "image_url": ""
   },
   {
     "id": 8,
@@ -62,7 +68,8 @@ ingredients_json = [
     "region": "Italia",
     "variety": "Spaghetti",
     "flavor": "Neutro y ligeramente salado",
-    "medition": "gramos"
+    "medition": "gramos",
+    "image_url": ""
   },
   {
     "id": 9,
@@ -70,6 +77,34 @@ ingredients_json = [
     "region": "Mediterráneo",
     "variety": "Bell pepper",
     "flavor": "Dulce y jugoso",
-    "medition": "gramos"
+    "medition": "gramos",
+    "image_url": ""
+  },
+  {
+    "id": 10,
+    "name": "Patatas",
+    "region": "España",
+    "variety": "Blanca",
+    "flavor": "Suave",
+    "medition": "g",
+    "image_url": ""
+  },
+  {
+    "id": 11,
+    "name": "Huevos",
+    "region": "España",
+    "variety": "Campero",
+    "flavor": "Suave",
+    "medition": "unidad",
+    "image_url": ""
+  },
+  {
+    "id": 12,
+    "name": "Aceite de oliva",
+    "region": "España",
+    "variety": "Virgen extra",
+    "flavor": "Intenso",
+    "medition": "ml",
+    "image_url": ""
   }
 ]

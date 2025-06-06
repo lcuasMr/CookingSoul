@@ -17,8 +17,9 @@ class IngredientEntity(Base):
     flavor = mapped_column(String(100), nullable=True)
     medition = mapped_column(String(50), nullable=True)
     image_url = mapped_column(String(255), nullable=True)
-    
+
     recipies: Mapped[list["RecipieIngredientAssociation"]] = relationship(back_populates="ingredient")
+
 
     def __init__(self, ingredient_model):
         super().__init__()

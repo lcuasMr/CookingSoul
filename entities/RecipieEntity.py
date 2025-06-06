@@ -8,6 +8,8 @@ from entities.association_tables import RecipieIngredientAssociation
 
 from entities import Base
 
+import sys
+
 class RecipieEntity(Base):
     __tablename__ = 'recipies'
 
@@ -18,12 +20,14 @@ class RecipieEntity(Base):
 
     ingredients: Mapped[list["RecipieIngredientAssociation"]] = relationship(back_populates="recipie")
 
+
     def __init__(self, recipie_model):
+        print(f"Creating RecipieEntity with model: {recipie_model}", file=sys.stdout)
         super().__init__()
         self.id = recipie_model.id
         self.title = recipie_model.title
         self.description = recipie_model.description
-        self.ingredientes = recipie_model.ingredients
+        self.ingredients = []
         self.instructions = recipie_model.instructions
 
     def __repr__(self):
