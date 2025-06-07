@@ -24,35 +24,19 @@
         </section>
 
         <section id="recetas" class="container mb-5">
-            <h2 class="mb-4 text-center">Nuestras Recetas</h2>
+            <h2 class="mb-4 text-center">Top Recetas</h2>
             <div class="row recetas-grid">
-                <article class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <img src="images/receta1.jpg" class="card-img-top" alt="Receta 1">
-                        <div class="card-body">
-                            <h3 class="card-title">Receta 1</h3>
-                            <p class="card-text">Descripción breve de la receta.</p>
+                {% for i in range(2)%}
+                    <article class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <img src="images/receta1.jpg" class="card-img-top" alt="Receta 1">
+                            <div class="card-body">
+                                <h3 class="card-title">{{recetas[i].title}}</h3>
+                                <p class="card-text">{{recetas[i].description}}</p>
+                            </div>
                         </div>
-                    </div>
-                </article>
-                <article class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <img src="images/receta2.jpg" class="card-img-top" alt="Receta 2">
-                        <div class="card-body">
-                            <h3 class="card-title">Receta 2</h3>
-                            <p class="card-text">Descripción breve de la receta.</p>
-                        </div>
-                    </div>
-                </article>
-                <article class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <img src="images/receta3.jpg" class="card-img-top" alt="Receta 3">
-                        <div class="card-body">
-                            <h3 class="card-title">Receta 3</h3>
-                            <p class="card-text">Descripción breve de la receta.</p>
-                        </div>
-                    </div>
-                </article>
+                    </article>
+                {% endfor %}
             </div>
         </section>
 
