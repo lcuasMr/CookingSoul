@@ -85,3 +85,18 @@ class Facade:
         recipie = Recipie(title=title, description=description, ingredients=ingredient_cuantity, instructions=instructions)
         print(f"Adding new recipie: {recipie}", file=sys.stdout)
         return recipie_dao.persist_model(recipie)
+    
+    def get_recipie_by_id(self, recipie_id: int) -> Recipie:
+        recipie_dao = RecipieDAO(self._engine)
+        recipie = recipie_dao.get_recipie_by_id(recipie_id)
+        print(f"Retrieved recipie by ID {recipie_id}: {recipie}", file=sys.stdout)
+        if recipie:
+            return recipie
+        else:
+            raise ValueError(f"Recipie with ID {recipie_id} not found.")
+        
+    def get_all_recipies(self) -> list[Recipie]:
+        recipie_dao = RecipieDAO(self._engine)
+        recipies = recipie_dao.get_all_recipies()
+        print(f"Retrieved all recipies: {recipies}", file=sys.stdout)
+        return recipies

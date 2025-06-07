@@ -40,5 +40,6 @@ class RecipieEntity(Base):
             id=self.id,
             title=self.title,
             description=self.description,
+            ingredients=[(assoc.ingredient_id, assoc.cuantity) for assoc in self.ingredients],
             instructions=self.instructions
         )

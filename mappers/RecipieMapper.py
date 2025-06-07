@@ -2,6 +2,8 @@ from models.recipie import Recipie
 
 from mappers.IngredientMapper import IngredientMapper
 
+import sys
+
 class RecipieMapper:
     @staticmethod
     def map(json_data):
@@ -14,13 +16,13 @@ class RecipieMapper:
         return Recipie(id, title, description, ingredients, instructions)
 
     @staticmethod
-    def reverse_map(recipie):
+    def reverse_map(recipie: Recipie):
         ingredientmapper = IngredientMapper()
+        print(recipie, file=sys.stdout)
         return {
             'id': recipie.id,
             'title': recipie.title,
             'description': recipie.description,
             'ingredients': recipie.ingredients,
-            'instructions': [ingredientmapper.reverse_map(ingredient) for ingredient in recipie.ingredients],
-            'created_at': recipie.created_at
+            'instructions': recipie.instructions
         }
