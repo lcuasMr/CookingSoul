@@ -7,10 +7,13 @@ from flask_sqlalchemy import SQLAlchemy
 from models.user import User
 
 from mappers.UserMapper import UsuarioMapper
+from mappers.IngredientMapper import IngredientMapper
 
 from Facade import Facade
 from entities import Base
 from sqlalchemy import create_engine
+
+import json
 
 app = Flask(__name__)
 
@@ -20,7 +23,6 @@ app.config['SECRET_KEY'] = SECRET_KEY
 
 
 _DB_ENGINE = create_engine('sqlite:///cooking_soul.db')
-Base.metadata.create_all(_DB_ENGINE)
 
 _FACADE = Facade(engine=_DB_ENGINE)
 
@@ -55,6 +57,44 @@ def usuarios():
     users = [UsuarioMapper.reverse_map(user) for user in _FACADE.list_users()]
     print(users, file=sys.stdout)
     return render_template('usuarios.html', usuarios=users)
+
+@app.route('/ingredientes', methods=['GET'])
+def ingredientes():
+    ingredients = [IngredientMapper.reverse_map(ingredient) for ingredient in _FACADE.list_ingredients()]
+    print(ingredients, file=sys.stdout)
+    return render_template('ingredientes.html', ingredients=ingredients)
+
+@app.route('/ingredientes/<int:ingredient_id>', methods=['GET'])
+def ingrediente(ingredient_id):
+    ingredient = _FACADE.get_ingredient_by_id(ingredient_id)
+    print(ingredient, file=sys.stdout)
+    if ingredient:
+        return render_template('ingredient.html', ingredient=IngredientMapper.reverse_map(ingredient))
+    else:
+        return "Ingredient not found", 404
+    
+@app.route('/add_receta', methods=['POST', 'GET'])
+def add_receta():
+    if request.method == 'POST':
+        # Here you would handle the form submission for adding a recipe
+        # For now, we just return a success message
+        ingredient_cuantity: list[tuple] = []
+        ingredients_json = request.form['ingredients']
+        ingredients_list = json.loads(ingredients_json)
+        for ingredient in ingredients_list:
+            print(ingredient, file=sys.stdout)
+            ingredient_cuantity.append((ingredient.get("id"), ingredient.get("cuantity", 0)))
+        _FACADE.add_recipie(
+            title=request.form['title'],
+            description=request.form['description'],
+            ingredient_cuantity=ingredient_cuantity,
+            instructions=request.form['instructions']
+        )
+        ingredients = [IngredientMapper.reverse_map(ingredient) for ingredient in _FACADE.list_ingredients()]
+        return render_template('add_receta.html', ingredients=ingredients, success=True)
+    else:
+        ingredients = [IngredientMapper.reverse_map(ingredient) for ingredient in _FACADE.list_ingredients()]
+        return render_template('add_receta.html', ingredients=ingredients, success=True)
 
 if __name__ == '__main__':
     app.run(debug=True)

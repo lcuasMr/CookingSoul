@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Buscador con Cantidades</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .ingredient-dropdown {
+      position: absolute;
+      width: 100%;
+      z-index: 1000;
+      background: white;
+      border: 1px solid #dee2e6;
+      border-radius: 0.375rem;
+      max-height: 250px;
+      overflow-y: auto;
+      box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+      display: none;
+    }
+    .ingredient-item {
+      cursor: pointer;
+    }
+    .ingredient-item:hover {
+      background-color: #f8f9fa;
+    }
+    .ingredient-img {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      margin-right: 10px;
+    }
+    .selected-ingredient {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body class="p-4">
+  <div class="container">
+    <h2 class="mb-4">Formulario con Ingredientes y Cantidades</h2>
+
+    <form id="ingredientForm" autocomplete="off">
+      <div class="mb-3 position-relative">
+        <label for="searchInput" class="form-label">Buscar ingrediente</label>
+        <input type="text" id="searchInput" class="form-control" placeholder="Ej. tomate, ajo, etc.">
+        <ul class="list-group ingredient-dropdown" id="ingredientList"></ul>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Ingredientes seleccionados</label>
+        <div id="selectedIngredients"></div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Enviar</button>
+    </form>
+  </div>
+
+  <script>
+    const ingredientes = [
+      {'id': 0, 'name': 'tomate', 'region': 'España', 'variety': 'cherry', 'flavor': 'dulce', 'medition': 'Kg', 'image_url': null},
+      {'id': 1, 'name': 'Tomate', 'region': 'Mediterráneo', 'variety': 'Roma', 'flavor': 'Dulce y ácido', 'medition': 'gramos', 'image_url': 'tomate_roma.jpg'},
+      {'id': 2, 'name': 'Aceite de oliva', 'region': 'Andalucía', 'variety': 'Virgen extra', 'flavor': 'Frutado y suave', 'medition': 'mililitros', 'image_url': ''},
+      {'id': 3, 'name': 'Ajo', 'region': 'Castilla-La Mancha', 'variety': 'Morado', 'flavor': 'Intenso y picante', 'medition': 'dientes', 'image_url': ''},
+      {'id': 4, 'name': 'Albahaca', 'region': 'Italia', 'variety': 'Genovesa', 'flavor': 'Dulce y anisado', 'medition': 'hojas', 'image_url': ''},
+      {'id': 5, 'name': 'Queso parmesano', 'region': 'Emilia-Romaña', 'variety': 'Parmigiano Reggiano', 'flavor': 'Umami y salado', 'medition': 'gramos', 'image_url': ''},
+      {'id': 6, 'name': 'Pimienta negra', 'region': 'India', 'variety': 'Tellicherry', 'flavor': 'Picante y terroso', 'medition': 'cucharaditas', 'image_url': ''},
+      {'id': 7, 'name': 'Alcaparras', 'region': 'Mediterráneo', 'variety': 'Capparis spinosa', 'flavor': 'Ácido y salado', 'medition': 'gramos', 'image_url': ''},
+      {'id': 8, 'name': 'Pasta', 'region': 'Italia', 'variety': 'Spaghetti', 'flavor': 'Neutro y ligeramente salado', 'medition': 'gramos', 'image_url': ''},
+      {'id': 9, 'name': 'Pimiento rojo', 'region': 'Mediterráneo', 'variety': 'Bell pepper', 'flavor': 'Dulce y jugoso', 'medition': 'gramos', 'image_url': ''},
+      {'id': 10, 'name': 'Patatas', 'region': 'España', 'variety': 'Blanca', 'flavor': 'Suave', 'medition': 'g', 'image_url': ''},
+      {'id': 11, 'name': 'Huevos', 'region': 'España', 'variety': 'Campero', 'flavor': 'Suave', 'medition': 'unidad', 'image_url': ''},
+      {'id': 12, 'name': 'Aceite de oliva', 'region': 'España', 'variety': 'Virgen extra', 'flavor': 'Intenso', 'medition': 'ml', 'image_url': ''}
+    ];
+
+    const searchInput = document.getElementById("searchInput");
+    const ingredientList = document.getElementById("ingredientList");
+    const selectedContainer = document.getElementById("selectedIngredients");
+    const form = document.getElementById("ingredientForm");
+
+    const selectedIngredients = new Map();
+
+    function mostrarIngredientes(lista) {
+      ingredientList.innerHTML = "";
+      lista.forEach(ing => {
+        const li = document.createElement("li");
+        li.className = "list-group-item d-flex align-items-center ingredient-item";
+        const imageUrl = ing.image_url ? ing.image_url : "https://via.placeholder.com/40";
+
+        li.innerHTML = `
+          <img src="${imageUrl}" alt="${ing.name}" class="ingredient-img rounded">
+          <div>
+            <strong>${ing.name}</strong><br>
+            <small>${ing.variety} – ${ing.region}</small>
+          </div>
+        `;
+        li.addEventListener("click", () => {
+          searchInput.value = "";
+          ingredientList.style.display = "none";
+          if (!selectedIngredients.has(ing.id)) {
+            selectedIngredients.set(ing.id, { ...ing, quantity: "" });
+            agregarIngredienteSeleccionado(ing);
+          }
+        });
+        ingredientList.appendChild(li);
+      });
+    }
+
+    function agregarIngredienteSeleccionado(ing) {
+      const row = document.createElement("div");
+      row.className = "selected-ingredient input-group";
+
+      const label = document.createElement("span");
+      label.className = "input-group-text";
+      label.textContent = ing.name;
+
+      const input = document.createElement("input");
+      input.type = "number";
+      input.className = "form-control";
+      input.placeholder = `Cantidad (${ing.medition || 'unidad'})`;
+      input.required = true;
+      input.min = 0;
+      input.step = "any";
+      input.addEventListener("input", () => {
+        selectedIngredients.get(ing.id).quantity = input.value;
+      });
+
+      const removeBtn = document.createElement("button");
+      removeBtn.className = "btn btn-outline-danger";
+      removeBtn.type = "button";
+      removeBtn.textContent = "Eliminar";
+      removeBtn.addEventListener("click", () => {
+        selectedIngredients.delete(ing.id);
+        selectedContainer.removeChild(row);
+      });
+
+      row.appendChild(label);
+      row.appendChild(input);
+      row.appendChild(removeBtn);
+      selectedContainer.appendChild(row);
+    }
+
+    searchInput.addEventListener("input", () => {
+      const filtro = searchInput.value.toLowerCase();
+      const filtrados = ingredientes.filter(ing =>
+        ing.name.toLowerCase().includes(filtro)
+      );
+
+      ingredientList.style.display = filtro && filtrados.length > 0 ? "block" : "none";
+      if (filtro && filtrados.length > 0) mostrarIngredientes(filtrados);
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!searchInput.contains(e.target) && !ingredientList.contains(e.target)) {
+        ingredientList.style.display = "none";
+      }
+    });
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = Array.from(selectedIngredients.values());
+      const vacíos = data.filter(i => !i.quantity || parseFloat(i.quantity) <= 0);
+
+      if (vacíos.length > 0) {
+        alert("Por favor, especifica una cantidad válida para todos los ingredientes.");
+        return;
+      }
+
+      console.log("Ingredientes con cantidades:", data);
+      alert("Enviado. Consulta la consola para ver los datos.");
+    });
+  </script>
+</body>
+</html>

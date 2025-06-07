@@ -45,5 +45,5 @@ class User:
 
 
     def __str__(self):
-        return f"Usuario({self.id}, {self.nombre}, {self.password})"
+        return f"Usuario({self.id}, {self.username}, {self.password})"
     
