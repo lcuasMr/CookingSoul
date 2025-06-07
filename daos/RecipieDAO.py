@@ -9,6 +9,8 @@ from entities.RecipieEntity import RecipieEntity
 from entities.IngredientEntity import IngredientEntity
 from entities.association_tables import RecipieIngredientAssociation
 
+from daos.IngredientDAO import IngredientDAO
+
 import sys
 
 class RecipieDAO:

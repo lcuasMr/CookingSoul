@@ -8,6 +8,8 @@ from models.user import User
 
 from mappers.UserMapper import UsuarioMapper
 from mappers.IngredientMapper import IngredientMapper
+from mappers.RecipieMapper import RecipieMapper
+
 
 from Facade import Facade
 from entities import Base
@@ -28,7 +30,11 @@ _FACADE = Facade(engine=_DB_ENGINE)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    recipies = _FACADE.get_all_recipies()
+    ingredients = [IngredientMapper.reverse_map(ingredient) for ingredient in _FACADE.list_ingredients()]
+    recipies_map = [RecipieMapper.reverse_map(recipie) for recipie in recipies]
+
+    return render_template('index.html', recetas= recipies_map)
 
 @app.route('/user/<username>')
 def user(username):
@@ -95,6 +101,14 @@ def add_receta():
     else:
         ingredients = [IngredientMapper.reverse_map(ingredient) for ingredient in _FACADE.list_ingredients()]
         return render_template('add_receta.html', ingredients=ingredients, success=True)
+
+@app.route('/recetas', methods=['GET'])
+def recetas():
+    recipies = _FACADE.get_all_recipies()
+    ingredients = [IngredientMapper.reverse_map(ingredient) for ingredient in _FACADE.list_ingredients()]
+    recipies_map = [RecipieMapper.reverse_map(recipie) for recipie in recipies]
+    print(f"Map: {recipies_map}", file=sys.stdout)
+    return render_template('recetas.html', recetas=recipies_map, ingredients=ingredients)
 
 if __name__ == '__main__':
     app.run(debug=True)

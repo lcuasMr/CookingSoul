@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Recetas</h2>
+    <div class="row">
+        {% for receta in recetas %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ receta.title }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ receta.description }}</h6>
+                    <p class="card-text"><strong>Ingredientes:</strong></p>
+                    <ul>
+                        {% for ing in receta.ingredients %}
+                            {% set ing_info = ingredients[ing[0]] %}
+                            <li>
+                                {{ ing_info.name }}
+                                {{ing[1]}}
+                                {{ ing_info.medition}}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <p class="card-text mt-auto"><strong>Instrucciones:</strong> {{ receta.instructions }}</p>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">No hay recetas disponibles.</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
