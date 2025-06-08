@@ -163,6 +163,35 @@ def add_receta():
         ingredients = [IngredientMapper.reverse_map(ingredient) for ingredient in _FACADE.list_ingredients()]
         return render_template('add_receta.html', ingredients=ingredients, success=True)
 
+@app.route('/post_receta', methods=['POST', 'GET'])
+@login_required
+def post_receta():
+    if request.method == 'POST':
+        # Here you would handle the form submission for adding a recipe
+        # For now, we just return a success message
+        ingredient_cuantity: list[tuple] = []
+        ingredients_json = request.form['ingredients']
+        ingredients_list = json.loads(ingredients_json)
+        for ingredient in ingredients_list:
+            #print(ingredient, file=sys.stdout)
+            ingredient_cuantity.append((ingredient.get("id"), ingredient.get("cuantity", 0)))
+
+        new_post = _FACADE.post_recipie(
+            user_id=current_user.id,
+            title=request.form['title'],
+            description=request.form['description'],
+            ingredient_cuantity=ingredient_cuantity,
+            instructions=request.form['instructions']
+        )
+
+        print(f"NUEVO POST: {new_post}", file=sys.stdout)
+
+        ingredients = [IngredientMapper.reverse_map(ingredient) for ingredient in _FACADE.list_ingredients()]
+        return render_template('post_receta.html', ingredients=ingredients, success=True)
+    else:
+        ingredients = [IngredientMapper.reverse_map(ingredient) for ingredient in _FACADE.list_ingredients()]
+        return render_template('post_receta.html', ingredients=ingredients, success=True)
+    
 @app.route('/recetas', methods=['GET'])
 @login_required
 def recetas():
@@ -171,6 +200,19 @@ def recetas():
     recipies_map = [RecipieMapper.reverse_map(recipie) for recipie in recipies]
     print(f"Map: {recipies_map}", file=sys.stdout)
     return render_template('recetas.html', recetas=recipies_map, ingredients=ingredients)
+
+@app.route('/recetas/<int:recipie_id>', methods=['GET'])
+@login_required
+def receta(recipie_id):
+    print("VIENDO UNA RECETA", file=sys.stdout)
+    receta = _FACADE.get_recipie_by_id(recipie_id)
+    if receta: 
+        ingredients = [IngredientMapper.reverse_map(ingredient) for ingredient in _FACADE.list_ingredients()]
+        receta_map = RecipieMapper.reverse_map(receta)
+        print(f"Map: {receta_map}", file=sys.stdout)
+        return render_template('receta.html', receta=receta, ingredients=ingredients)
+    else:
+        return "Recipie not found", 404
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Añadir Receta</h4>
+                </div>
+                <div class="card-body">
+                    <form id="recipieForm" method="post" action="{{ url_for('post_receta') }}">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Título</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3 position-relative">
+                            <label for="searchInput" class="form-label">Buscar ingrediente por nombre</label>
+                            <input type="text" id="searchInput" class="form-control" placeholder="Ej. tomate, ajo, etc.">
+                            <ul class="list-group ingredient-dropdown" id="ingredientList"></ul>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ingredientes seleccionados</label>
+                            <div id="selectedIngredients"></div>
+                        </div>
+                        <input type="hidden" name="ingredients" id="ingredientsInput">
+                        <div class="mb-3">
+                            <label for="instructions" class="form-label">Instrucciones</label>
+                            <textarea class="form-control" id="instructions" name="instructions" rows="4" required></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">Guardar Receta</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+const ingredientes = {{ingredients | tojson}};
+
+const searchInput = document.getElementById("searchInput");
+const ingredientList = document.getElementById("ingredientList");
+const selectedContainer = document.getElementById("selectedIngredients");
+const form = document.getElementById("recipieForm");
+
+const selectedIngredients = new Map();
+
+function mostrarIngredientes(lista) {
+    ingredientList.innerHTML = "";
+    lista.forEach(ing => {
+    const li = document.createElement("li");
+    li.className = "list-group-item d-flex align-items-center ingredient-item";
+    const imageUrl = ing.image_url ? ing.image_url : "https://via.placeholder.com/40";
+
+    li.innerHTML = `
+        <img src="${imageUrl}" alt="${ing.name}" class="ingredient-img rounded">
+        <div>
+        <strong>${ing.name}</strong><br>
+        <small>${ing.variety} – ${ing.region}</small>
+        </div>
+    `;
+    li.addEventListener("click", () => {
+        searchInput.value = "";
+        ingredientList.style.display = "none";
+        if (!selectedIngredients.has(ing.id)) {
+        selectedIngredients.set(ing.id, { ...ing, cuantity: "" });
+        agregarIngredienteSeleccionado(ing);
+        }
+    });
+    ingredientList.appendChild(li);
+    });
+}
+
+function agregarIngredienteSeleccionado(ing) {
+    const group = document.createElement("div");
+    group.className = "input-group mb-2 selected-ingredient";
+
+    // Nombre del ingrediente como label (usa <span>)
+    const label = document.createElement("span");
+    label.className = "input-group-text";
+    label.textContent = ing.name;
+    label.dataset.ingId = ing.id; // Añade el ID del ingrediente al label
+
+    // Input de cantidad
+    const input = document.createElement("input");
+    input.type = "number";
+    input.className = "form-control";
+    input.placeholder = `Cantidad (${ing.medition || 'unidad'})`;
+    input.required = true;
+    input.min = 0;
+    input.step = "any";
+    input.style.maxWidth = "150px";
+    input.addEventListener("input", () => {
+        selectedIngredients.get(ing.id).cuantity = input.value;
+    });
+
+    // Botón eliminar (en un input-group-append)
+    const removeBtn = document.createElement("button");
+    removeBtn.className = "btn btn-outline-danger";
+    removeBtn.type = "button";
+    removeBtn.textContent = "Eliminar";
+    removeBtn.addEventListener("click", () => {
+        selectedIngredients.delete(ing.id);
+        selectedContainer.removeChild(group);
+    });
+
+    group.appendChild(label);
+    group.appendChild(input);
+    group.appendChild(removeBtn);
+    selectedContainer.appendChild(group);
+}
+
+searchInput.addEventListener("input", () => {
+    const filtro = searchInput.value.toLowerCase();
+    const filtrados = ingredientes.filter(ing =>
+    ing.name.toLowerCase().includes(filtro)
+    );
+
+    ingredientList.style.display = filtro && filtrados.length > 0 ? "block" : "none";
+    if (filtro && filtrados.length > 0) mostrarIngredientes(filtrados);
+});
+
+document.addEventListener("click", (e) => {
+    if (!searchInput.contains(e.target) && !ingredientList.contains(e.target)) {
+    ingredientList.style.display = "none";
+    }
+});
+
+form.addEventListener("submit", (e) => {
+    // Sincroniza los valores de los inputs con el Map
+    selectedContainer.querySelectorAll('input[type="number"]').forEach(input => {
+        const ingId = parseInt(input.closest('.selected-ingredient').querySelector('.input-group-text').dataset.ingId);
+        if (selectedIngredients.has(ingId)) {
+            selectedIngredients.get(ingId).cuantity = input.value;
+        }
+    });
+
+    const data = Array.from(selectedIngredients.values());
+    const vacíos = data.filter(i => !i.cuantity || parseFloat(i.cuantity) <= 0);
+
+    if (vacíos.length > 0) {
+    e.preventDefault();
+    alert("Por favor, especifica una cantidad válida para todos los ingredientes.");
+    return;
+    }
+
+    document.getElementById("ingredientsInput").value = JSON.stringify(data);
+
+    
+    console.log("ingredientes con cantidades:", data);
+    alert("Enviado. Consulta la consola para ver los datos.");
+});
+</script>
+{% endblock %}

@@ -94,11 +94,21 @@ class Facade:
     def add_recipie(self, title, description, ingredient_cuantity, instructions):
         recipie_dao = RecipieDAO(self._engine)
         print(ingredient_cuantity, file=sys.stdout)
-        ingredient_dao = IngredientDAO(self._engine)
         recipie = Recipie(title=title, description=description, ingredients=ingredient_cuantity, instructions=instructions)
         print(f"Adding new recipie: {recipie}", file=sys.stdout)
         return recipie_dao.persist_model(recipie)
     
+    def post_recipie(self, user_id, title, description, ingredient_cuantity, instructions):
+        recipie_dao = RecipieDAO(self._engine)
+        print(ingredient_cuantity, file=sys.stdout)
+        recipie = Recipie(title=title, description=description, ingredients=ingredient_cuantity, instructions=instructions)
+        print(f"Adding new recipie: {recipie}", file=sys.stdout)
+        new_recipie = recipie_dao.persist_model(recipie)
+    
+        post_dao = PostDAO(self._engine)
+        return post_dao.persist_model(Post(user_id=user_id, content_type='recipie', description=new_recipie.description, recipie_id=new_recipie.id))
+
+
     def get_recipie_by_id(self, recipie_id: int) -> Recipie:
         recipie_dao = RecipieDAO(self._engine)
         recipie = recipie_dao.get_recipie_by_id(recipie_id)
