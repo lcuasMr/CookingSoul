@@ -49,9 +49,9 @@ class UserDAO:
             session.refresh(user)
             return user
 
-    def update_user(self, user_id: int, updated_data: dict) -> Optional[User]:
+    def update_user(self, user_id: int, updated_data: dict) -> Optional[UserEntity]:
         with self._session_maker() as session:
-            user = session.query(User).filter(User.id == user_id).first()
+            user = session.query(UserEntity).filter(UserEntity.id == user_id).first()
             if user:
                 for key, value in updated_data.items():
                     setattr(user, key, value)
@@ -61,7 +61,7 @@ class UserDAO:
 
     def delete_user(self, user_id: int) -> bool:
         with self._session_maker() as session:
-            user = session.query(User).filter(User.id == user_id).first()
+            user = session.query(UserEntity).filter(UserEntity.id == user_id).first()
             if user:
                 session.delete(user)
                 session.commit()

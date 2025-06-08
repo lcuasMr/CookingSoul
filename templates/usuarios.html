@@ -19,8 +19,8 @@
                 <td>{{ usuario.nombre }}</td>
                 <td>{{ usuario.email }}</td>
                 <td>
-                    <a href="/usuarios/{{ usuario.id }}/editar" class="btn btn-primary btn-sm">Editar</a>
-                    <a href="/usuarios/{{ usuario.id }}/eliminar" class="btn btn-danger btn-sm">Eliminar</a>
+                    <a href="/user/{{ usuario.id }}" class="btn btn-primary btn-sm">Ver</a>
+                    <a href="/user/delete/{{ usuario.id }}" class="btn btn-danger btn-sm">Eliminar</a>
                 </td>
             </tr>
             {% endfor %}

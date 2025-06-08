@@ -2,19 +2,19 @@
 
 {% block content %}
     <div class="container mt-4">
-        <h1 class="text-center">{{ current_user.username }}</h1>
+        <h1 class="text-center">{{ user.username }}</h1>
         <p class="text-muted text-center">Posts</p>
         <ul class="list-group">
             {% for post in posts %}
-                <li class="list-group-item">
+                <li class="list-group-item mb-4">
                     <strong>Tipo:</strong> {{ post.content_type }}<br>
                     <strong>Descripción:</strong> {{ post.description }}<br>
                     <strong>Receta ID:</strong> {{ post.recipie_id }}<br>
                     <strong>Likes:</strong> {{ post.likes }}
+                    <div class="mt-2">
+                        <a href="/recetas/{{ post.recipie_id }}" class="btn btn-sm btn-info">Ver en detalle</a>
+                    </div>
                 </li>
-                <div class="mt-2">
-                    <a href="/recetas/{{ post.recipie_id }}" class="btn btn-sm btn-info">Ver en detalle</a>
-                </div>
             {% endfor %}
         </ul>
         <div class="text-center mt-3">

@@ -72,6 +72,10 @@ class Facade:
         user_dao.persist_model(user)
         return user
     
+    def delete_user(self, user_id: int) -> bool:
+        user_dao: UserDAO = UserDAO(self._engine)
+        return user_dao.delete_user(user_id)
+    
     def list_users(self) -> list[UserEntity]:
         user_dao: UserDAO = UserDAO(self._engine)
         print(f"Listing all users: {user_dao.get_all_users()}", file=sys.stdout)
@@ -129,3 +133,4 @@ class Facade:
         posts = post_dao.get_posts_by_user_id(user_id)
         print(f"Retrieved posts by user ID {user_id}: {posts}", file=sys.stdout)
         return posts
+    

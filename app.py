@@ -80,18 +80,23 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+@app.route('/user/delete/<int:user_id>', methods = ['GET', 'POST'])
+@login_required
+def delete_user(user_id):
+    _FACADE.delete_user(user_id)
+    users = _FACADE.list_users()
+    return render_template('usuarios.html', usuarios=users)
+
 @app.route('/my_profile')
 @login_required
 def my_profile():
     user = _FACADE.get_user(current_user.id)
     posts = _FACADE.get_posts_by_user_id(current_user.id)
-    print(f"YO: {user}")
-    return render_template('user.html', user=current_user, posts=posts)
-
-@app.route('/user/<username>')
-@login_required
-def user(username):
-    return render_template('user.html', username=username)
+    recipies = [_FACADE.get_recipie_by_id(post.recipie_id) for post in posts]
+    print(f"YO: {user}", file=sys.stdout)
+    print(f"MIS POSTS: {posts}", file=sys.stdout)
+    print(f"MIS RECIPIES: {recipies}", file=sys.stdout)
+    return render_template('user.html', user=current_user, posts=posts, recipies=recipies)
 
 @app.route('/add_user', methods=['POST', 'GET'])
 @login_required
@@ -109,9 +114,10 @@ def add_user():
 def get_user(user_id):
     user = _FACADE.get_user(user_id)
     posts = _FACADE.get_posts_by_user_id(user_id)
+    recipies = [_FACADE.get_recipie_by_id(post.recipie_id) for post in posts]
     print(f"Posts de el usuario {user.username}: {posts}")
     if user:
-        return render_template('user.html', user=user, posts=posts)
+        return render_template('user.html', user=user, posts=posts, recipies=recipies)
     else:
         return "User not found", 404
     
