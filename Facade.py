@@ -43,8 +43,8 @@ class Facade:
         userdao = UserDAO(self._engine)
         ingredientdao = IngredientDAO(self._engine)
         
-        print(userdao.persist_model(User(username='admin', email='cosa@gmail.com', password='$2b$12$H9PsJZRejbI.Vx5y.BeXfuMdwoi5Oe0wZSEm1bbaeaveF2vc/oEWe')), file=sys.stdout)
-        print(userdao.persist_model(User(username='lucas', email='lucas@gmail.com', password='$2b$12$gO1V36qwr611DaSTRXp0bO45CTpstQEmjKPJmGmNCW3FPpYf6bhbe')), file=sys.stdout)
+        print(userdao.persist_model(User(username='admin', email='admin@gmail.com', password='$2b$12$H9PsJZRejbI.Vx5y.BeXfuMdwoi5Oe0wZSEm1bbaeaveF2vc/oEWe')), file=sys.stdout)
+        print(userdao.persist_model(User(username='user', email='user@gmail.com', password='$2b$12$ph8V9FlJWYEGgGqabOwqF..WqE506jn.0zLaz279D3gV.S525GoVq')), file=sys.stdout)
         for ingredient in ingredient_list.ingredients_json:
           ingredientdao.persist_model(Ingredient(**ingredient))
 
