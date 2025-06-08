@@ -17,7 +17,7 @@ example_recipies = [
 example_posts = [
     {
         "id": 1,
-        "user_id": 1,
+        "user_id": 2,
         "content_type": "recipie",
         "description": "¡Acabo de preparar la Tortilla de Patatas y quedó increíble! 😋",
         "recipie_id": 1,

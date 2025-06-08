@@ -2,10 +2,10 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy.ext.declarative import declarative_base
 from models.user import User  # Assuming you have a User model defined in models/User.py
-
+from flask_login import UserMixin
 from entities import Base
 
-class UserEntity(Base):
+class UserEntity(Base, UserMixin):
     __tablename__ = 'users'
 
     id = mapped_column(Integer, primary_key=True, autoincrement=True)

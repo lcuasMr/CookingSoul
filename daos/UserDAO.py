@@ -31,6 +31,10 @@ class UserDAO:
     def get_user_by_id(self, user_id: int) -> Optional[User]:
         with self._session_maker() as session:
             return session.query(UserEntity).filter(UserEntity.id == user_id).first()
+        
+    def get_user_by_name(self, username: str) -> Optional[User]:
+        with self._session_maker() as session:
+            return session.query(UserEntity).filter(UserEntity.username == username).first()
 
     def get_all_users(self) -> List[User]:
         with self._session_maker() as session:
