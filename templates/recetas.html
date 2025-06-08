@@ -13,7 +13,7 @@
                     <p class="card-text"><strong>Ingredientes:</strong></p>
                     <ul>
                         {% for ing in receta.ingredients %}
-                            {% set ing_info = ingredients[ing[0]] %}
+                            {% set ing_info = ingredients[ing[0]-1] %}
                             <li>
                                 {{ ing_info.name }}
                                 {{ing[1]}}

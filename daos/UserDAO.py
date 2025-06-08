@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from models.user import User  
 from entities.UserEntity import UserEntity 
+from mappers.UserMapper import UserMapper
 class UserDAO:
     def __init__(self, engine: Engine):
         self._engine: Engine = engine
@@ -29,11 +30,13 @@ class UserDAO:
 
     def get_user_by_id(self, user_id: int) -> Optional[User]:
         with self._session_maker() as session:
-            return session.query(User).filter(User.id == user_id).first()
+            return session.query(UserEntity).filter(UserEntity.id == user_id).first()
 
     def get_all_users(self) -> List[User]:
         with self._session_maker() as session:
-            return session.query(UserEntity).all()
+            users = session.query(UserEntity).all()
+            # Haz el reverse_map aquí, dentro de la sesión
+            return [UserMapper.reverse_map(user) for user in users]
 
     def create_user(self, user: User) -> User:
         with self._session_maker() as session:

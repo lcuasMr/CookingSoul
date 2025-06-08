@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy.ext.declarative import declarative_base
 from models.user import User  # Assuming you have a User model defined in models/User.py
 
@@ -13,6 +13,8 @@ class UserEntity(Base):
     email = mapped_column(String(100), nullable=False, unique=True)
     password = mapped_column(String(255), nullable=False)
 
+    posts: Mapped[list["PostEntity"]] = relationship("PostEntity", back_populates="user")
+
 
     def __init__(self, user_model):
         super().__init__()
@@ -20,6 +22,7 @@ class UserEntity(Base):
         self.username = user_model.username
         self.email = user_model.email
         self.password = user_model.password
+        self.posts = []
 
     def __repr__(self):
         return f"<UserEntity(id={self.id}, username='{self.username}', email='{self.email}')>"
@@ -29,5 +32,9 @@ class UserEntity(Base):
             id=self.id,
             username=self.username,
             email=self.email,
-            password=self.password
+            password=self.password,
+            posts=[post.to_model for post in self.posts]
         )
+    
+from entities.PostEntity import PostEntity
+# Ensure that PostEntity is imported to avoid circular import issues

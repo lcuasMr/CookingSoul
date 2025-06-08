@@ -11,3 +11,16 @@ example_recipies = [
         "instructions": "Pela y corta las patatas. Fríelas en aceite de oliva. Bate los huevos y mezcla con las patatas. Cocina la mezcla en una sartén hasta que cuaje por ambos lados.",
     }
 ]
+
+
+
+example_posts = [
+    {
+        "id": 1,
+        "user_id": 1,
+        "content_type": "recipie",
+        "description": "¡Acabo de preparar la Tortilla de Patatas y quedó increíble! 😋",
+        "recipie_id": 1,
+        "likes": 5
+    }
+]

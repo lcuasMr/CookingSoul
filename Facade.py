@@ -5,19 +5,21 @@ from entities import UserEntity
 from daos.UserDAO import UserDAO
 from daos.IngredientDAO import IngredientDAO
 from daos.RecipieDAO import RecipieDAO
+from daos.PostDAO import PostDAO
 
 from sqlalchemy import Engine, MetaData, Table, Column, Integer, String, ForeignKey, ARRAY
 
 from models.user import User
 from models.ingredient import Ingredient
 from models.recipie import Recipie
+from models.post import Post
 
 from entities.UserEntity import UserEntity
 from entities.IngredientEntity import IngredientEntity
 from entities.RecipieEntity import RecipieEntity
 from entities.association_tables import RecipieIngredientAssociation
 from utils import ingredients as ingredient_list
-from utils.recipiesexample import example_recipies
+from utils.recipiesexample import example_recipies, example_posts
 
 import os
 
@@ -41,8 +43,8 @@ class Facade:
         userdao = UserDAO(self._engine)
         ingredientdao = IngredientDAO(self._engine)
         
-        print(userdao.persist_model(User(id=1, username='admin', email='cosa@gmail.com', password='admin')), file=sys.stdout)
-        print(ingredientdao.persist_model(Ingredient(id=0, name='tomate', region='España', variety='cherry', flavor= 'dulce', medition= 'Kg', image_url = None)), file=sys.stdout)
+        print(userdao.persist_model(User(username='admin', email='cosa@gmail.com', password='admin')), file=sys.stdout)
+        print(userdao.persist_model(User(username='lucas', email='lucas@gmail.com', password='lucaspass')), file=sys.stdout)
         for ingredient in ingredient_list.ingredients_json:
           ingredientdao.persist_model(Ingredient(**ingredient))
 
@@ -50,8 +52,15 @@ class Facade:
             dao = RecipieDAO(self._engine)
             dao.persist_model_example(Recipie(**recipe))
             #print(f"Adding example recipe: {recipe}", file=sys.stdout)
+        for post in example_posts:
+            post_dao = PostDAO(self._engine)
+            print(f"EXAMPLE POST DICT: {post}", file=sys.stdout)
+            post_dao.persist_model(Post(**post))
+            print(f"Adding example post: {post}", file=sys.stdout)
             
-
+    def get_user(self, user_id) -> User:
+        user_dao: UserDAO = UserDAO(self._engine)
+        return user_dao.get_user_by_id(user_id)
 
     def add_user(self, username: str, email: str, password: str) -> UserEntity:
         user_dao: UserDAO = UserDAO(self._engine)
@@ -100,3 +109,9 @@ class Facade:
         recipies = recipie_dao.get_all_recipies()
         print(f"Retrieved all recipies: {recipies}", file=sys.stdout)
         return recipies
+
+    def get_posts_by_user_id(self, user_id: int) -> list[Post]:
+        post_dao = PostDAO(self._engine)
+        posts = post_dao.get_posts_by_user_id(user_id)
+        print(f"Retrieved posts by user ID {user_id}: {posts}", file=sys.stdout)
+        return posts

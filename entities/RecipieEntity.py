@@ -20,6 +20,8 @@ class RecipieEntity(Base):
 
     ingredients: Mapped[list["RecipieIngredientAssociation"]] = relationship(back_populates="recipie")
 
+    post: Mapped["PostEntity"] = relationship(back_populates="recipie")
+
 
     def __init__(self, recipie_model):
         print(f"Creating RecipieEntity with model: {recipie_model}", file=sys.stdout)

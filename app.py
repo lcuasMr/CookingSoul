@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from models.user import User
 
-from mappers.UserMapper import UsuarioMapper
+from mappers.UserMapper import UserMapper
 from mappers.IngredientMapper import IngredientMapper
 from mappers.RecipieMapper import RecipieMapper
 
@@ -36,6 +36,13 @@ def index():
 
     return render_template('index.html', recetas= recipies_map)
 
+@app.route('/my_profile')
+def my_profile():
+    user = _FACADE.get_user(1)
+    posts = _FACADE.get_posts_by_user_id(1)
+    print(f"YO: {user}")
+    return render_template('user.html', user=user, posts=posts)
+
 @app.route('/user/<username>')
 def user(username):
     return render_template('user.html', username=username)
@@ -52,15 +59,17 @@ def add_user():
 
 @app.route('/user/<int:user_id>')
 def get_user(user_id):
-    user = User.query.get(user_id)
+    user = _FACADE.get_user(user_id)
+    posts = _FACADE.get_posts_by_user_id(user_id)
+    print(f"Posts de el usuario {user.username}: {posts}")
     if user:
-        return render_template('user.html', user=user)
+        return render_template('user.html', user=user, posts=posts)
     else:
         return "User not found", 404
     
 @app.route('/usuarios', methods=['GET'])
 def usuarios():
-    users = [UsuarioMapper.reverse_map(user) for user in _FACADE.list_users()]
+    users = _FACADE.list_users()
     print(users, file=sys.stdout)
     return render_template('usuarios.html', usuarios=users)
 

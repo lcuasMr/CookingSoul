@@ -1,1 +1,1 @@
-content_types = ['Ingrredient', 'Recipe', 'Cousine']
+content_types = ['recipie', 'comment']
